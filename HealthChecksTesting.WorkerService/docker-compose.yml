@@ -1,0 +1,56 @@
+services:
+    healthchecksworker:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        depends_on:
+            rabbitmq-hc:
+                condition: service_healthy
+            postgres-hc:
+                condition: service_healthy
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Development
+            - DOTNET_ENVIRONMENT=Development
+            - Serilog__MinimumLevel=Information
+            - RabbitMqSettings__HealthCheckUri=http://rabbitmq-hc:15672/api/overview
+            - PostgresSettings__ConnectionString=Host=postgres-hc;Port=5432;Database=postgres;Username=postgres;Password=postgres
+        networks:
+            - healthchecks-network
+
+    rabbitmq-hc:
+        image: rabbitmq:4-management
+        hostname: rabbitmq-hc
+        ports:
+            - "15673:15672"
+            - "5673:5672"
+        environment:
+            RABBITMQ_DEFAULT_USER: guest
+            RABBITMQ_DEFAULT_PASS: guest
+        healthcheck:
+            test: ["CMD", "rabbitmqctl", "status"]
+            interval: 5s
+            timeout: 5s
+            retries: 3
+        networks:
+            - healthchecks-network
+
+    postgres-hc:
+        image: postgres:latest
+        hostname: postgres-hc
+        ports:
+            - "5433:5432"
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: postgres
+        healthcheck:
+            test: ["CMD", "pg_isready", "-U", "postgres"]
+            interval: 5s
+            timeout: 5s
+            retries: 3
+        networks:
+            - healthchecks-network
+
+networks:
+    healthchecks-network:
+        driver: bridge
