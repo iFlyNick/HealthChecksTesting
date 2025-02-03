@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
+﻿using HealthChecksTesting.WorkerService.Models.RabbitMq;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
-using HealthChecksTesting.WorkerService.Models.RabbitMq;
 using System.Net.Http.Headers;
 using System.Text;
 
@@ -29,7 +29,7 @@ public class RmqHealthCheck(ILogger<RmqHealthCheck> logger, IOptions<RabbitMqSet
 
             var response = await httpClient.GetAsync(uri, ct);
 
-            var retVal = new HealthCheckResult(response.IsSuccessStatusCode ? HealthStatus.Healthy : HealthStatus.Unhealthy);
+            var retVal = response.IsSuccessStatusCode ? HealthCheckResult.Healthy("RabbitMQ is healthy") : HealthCheckResult.Unhealthy("RabbitMQ is unhealthy");
 
             if (_logger.IsEnabled(LogLevel.Information))
                 _logger.LogInformation("RabbitMQ Health Check Status: {status}", retVal.Status);
@@ -38,7 +38,7 @@ public class RmqHealthCheck(ILogger<RmqHealthCheck> logger, IOptions<RabbitMqSet
         }
         catch (Exception ex)
         {
-            var retVal = new HealthCheckResult(HealthStatus.Unhealthy, exception: ex);
+            var retVal = HealthCheckResult.Unhealthy("RabbitMQ is unhealthy", ex);
 
             if (_logger.IsEnabled(LogLevel.Information))
                 _logger.LogInformation("RabbitMQ Health Check Status: {status}", retVal.Status);

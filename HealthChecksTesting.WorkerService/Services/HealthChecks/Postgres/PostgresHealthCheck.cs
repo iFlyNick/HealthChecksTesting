@@ -29,7 +29,7 @@ public class PostgresHealthCheck(ILogger<PostgresHealthCheck> logger, IOptions<P
 
             var resp = await connection.QueryAsync<int>(cmd);
 
-            var retVal = resp.FirstOrDefault() == 1 ? new HealthCheckResult(HealthStatus.Healthy) : new HealthCheckResult(HealthStatus.Unhealthy);
+            var retVal = resp.FirstOrDefault() == 1 ? HealthCheckResult.Healthy("Postgres is healthy") : HealthCheckResult.Unhealthy("Postgres is unhealthy");
 
             if (_logger.IsEnabled(LogLevel.Information))
                 _logger.LogInformation("Postgres Health Check Status: {status}", retVal.Status);
@@ -38,7 +38,7 @@ public class PostgresHealthCheck(ILogger<PostgresHealthCheck> logger, IOptions<P
         }
         catch (Exception ex)
         {
-            var retVal = new HealthCheckResult(HealthStatus.Unhealthy, exception: ex);
+            var retVal = HealthCheckResult.Unhealthy("Postgres is unhealthy", ex);
 
             if (_logger.IsEnabled(LogLevel.Information))
                 _logger.LogInformation("Postgres Health Check Status: {status}", retVal.Status);

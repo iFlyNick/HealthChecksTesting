@@ -17,15 +17,13 @@ public class HealthCheckWorker(ILogger<HealthCheckWorker> logger, IRmqHealthChec
             if (_logger.IsEnabled(LogLevel.Debug))
                 _logger.LogDebug("Health Check Worker running at: {time}", DateTimeOffset.Now);
 
-            var rmqHealth = Task.Run(async() => await _rmqHealthCheck.CheckHealthAsync(null, stoppingToken));
-            var postgresHealth = Task.Run(async () => await _postgresHealthCheck.CheckHealthAsync(null, stoppingToken));
-
-            await Task.WhenAll(rmqHealth, postgresHealth);
+            var rmqHealth = await _rmqHealthCheck.CheckHealthAsync(new HealthCheckContext(), stoppingToken);
+            var postgresHealth = await _postgresHealthCheck.CheckHealthAsync(new HealthCheckContext(), stoppingToken);
 
             var rList = new List<HealthStatus>()
             {
-                rmqHealth.Result.Status,
-                postgresHealth.Result.Status
+                rmqHealth.Status,
+                postgresHealth.Status
             };
 
             var result = 
