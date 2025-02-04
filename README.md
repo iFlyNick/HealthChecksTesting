@@ -1,6 +1,6 @@
 # HealthChecksTesting
 
-A simple .net8 worker service that implements health checks for app contingencies around rabbitmq and a postgres database.
+A simple .net9 worker service that implements health checks for app contingencies around rabbitmq and a postgres database.
 
 Local startup (from Visual Studio as example) expects docker containers to be running on standard ports to simulate Healthy status messages. You'll need to create your own docker containers for RabbitMQ and Postgres to see fully healthy status messages for the app. Alternatively, start the app using docker compose up -d and the app will spin up all dependencies on an internal network outlined below in the Docker section
 
