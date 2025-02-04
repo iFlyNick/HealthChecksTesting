@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-namespace HealthChecksTesting.WorkerService.Services.HealthChecks.RabbitMq;
+namespace HealthChecksTesting.WorkerService.Services.HealthChecks;
 
-public interface IRmqHealthCheck
+public interface IHealthCheckService
 {
     Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext? context, CancellationToken ct = default);
 }

@@ -1,14 +1,13 @@
-﻿using HealthChecksTesting.WorkerService.Services.HealthChecks.Postgres;
-using HealthChecksTesting.WorkerService.Services.HealthChecks.RabbitMq;
+﻿using HealthChecksTesting.WorkerService.Services.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace HealthChecksTesting.WorkerService.Workers;
 
-public class HealthCheckWorker(ILogger<HealthCheckWorker> logger, IRmqHealthCheck rmqHealthCheck, IPostgresHealthCheck npgHealthCheck) : BackgroundService
+public class HealthCheckWorker(ILogger<HealthCheckWorker> logger, IHealthCheckService rmqHealthCheck, IHealthCheckService npgHealthCheck) : BackgroundService
 {
     private readonly ILogger<HealthCheckWorker> _logger = logger;
-    private readonly IRmqHealthCheck _rmqHealthCheck = rmqHealthCheck;
-    private readonly IPostgresHealthCheck _postgresHealthCheck = npgHealthCheck;
+    private readonly IHealthCheckService _rmqHealthCheck = rmqHealthCheck;
+    private readonly IHealthCheckService _postgresHealthCheck = npgHealthCheck;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {

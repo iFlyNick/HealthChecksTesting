@@ -6,7 +6,7 @@ using System.Text;
 
 namespace HealthChecksTesting.WorkerService.Services.HealthChecks.RabbitMq;
 
-public class RmqHealthCheck(ILogger<RmqHealthCheck> logger, IOptions<RabbitMqSettings> rmqSettings) : IHealthCheck, IRmqHealthCheck
+public class RmqHealthCheck(ILogger<RmqHealthCheck> logger, IOptions<RabbitMqSettings> rmqSettings) : IHealthCheck, IHealthCheckService
 {
     private readonly ILogger<RmqHealthCheck> _logger = logger;
     private readonly RabbitMqSettings _rmqSettings = rmqSettings.Value;

@@ -1,6 +1,7 @@
 using HealthChecks.UI.Client;
 using HealthChecksTesting.WorkerService.Models.Postgres;
 using HealthChecksTesting.WorkerService.Models.RabbitMq;
+using HealthChecksTesting.WorkerService.Services.HealthChecks;
 using HealthChecksTesting.WorkerService.Services.HealthChecks.Postgres;
 using HealthChecksTesting.WorkerService.Services.HealthChecks.RabbitMq;
 using HealthChecksTesting.WorkerService.Workers;
@@ -30,8 +31,8 @@ var host = Host.CreateDefaultBuilder(args)
         services.AddHealthChecksUI()
             .AddInMemoryStorage();
 
-        services.AddSingleton<IRmqHealthCheck, RmqHealthCheck>();
-        services.AddSingleton<IPostgresHealthCheck, PostgresHealthCheck>();
+        services.AddSingleton<IHealthCheckService, RmqHealthCheck>();
+        services.AddSingleton<IHealthCheckService, PostgresHealthCheck>();
 
         services.AddHostedService<BaseWorker>();
         services.AddHostedService<HealthCheckWorker>();

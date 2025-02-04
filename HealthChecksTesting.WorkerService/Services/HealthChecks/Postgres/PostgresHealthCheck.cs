@@ -6,7 +6,7 @@ using Npgsql;
 
 namespace HealthChecksTesting.WorkerService.Services.HealthChecks.Postgres;
 
-public class PostgresHealthCheck(ILogger<PostgresHealthCheck> logger, IOptions<PostgresSettings> dbSettings) : IHealthCheck, IPostgresHealthCheck
+public class PostgresHealthCheck(ILogger<PostgresHealthCheck> logger, IOptions<PostgresSettings> dbSettings) : IHealthCheck, IHealthCheckService
 {
     private readonly ILogger<PostgresHealthCheck> _logger = logger;
     private readonly PostgresSettings _dbSettings = dbSettings.Value;
