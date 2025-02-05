@@ -4,10 +4,12 @@ using HealthChecksTesting.WorkerService.Models.RabbitMq;
 using HealthChecksTesting.WorkerService.Services.HealthChecks;
 using HealthChecksTesting.WorkerService.Services.HealthChecks.Postgres;
 using HealthChecksTesting.WorkerService.Services.HealthChecks.RabbitMq;
+using HealthChecksTesting.WorkerService.Services.RabbitMq;
 using HealthChecksTesting.WorkerService.Workers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Serilog;
 
 var host = Host.CreateDefaultBuilder(args)
@@ -25,13 +27,17 @@ var host = Host.CreateDefaultBuilder(args)
         services.Configure<PostgresSettings>(hostContext.Configuration.GetSection("PostgresSettings"));
 
         services.AddHealthChecks()
-            .AddCheck<RmqHealthCheck>("rabbitmq_health_check", tags: ["rabbitmq"])
+            .AddCheck<RmqApiHealthCheck>("rabbitmq_api_health_check", tags: ["rabbitmq"])
+            .AddCheck<RmqConnectionHealthCheck>("rabbitmq_connection_health_check", tags: ["rabbitmq"])
             .AddCheck<PostgresHealthCheck>("postgres_health_check", tags: ["postgres"]);
 
         services.AddHealthChecksUI()
             .AddInMemoryStorage();
 
-        services.AddSingleton<IHealthCheckService, RmqHealthCheck>();
+        services.AddSingleton<IRmqConnectionService, RmqConnectionService>();
+
+        services.AddSingleton<IHealthCheckService, RmqApiHealthCheck>();
+        services.AddSingleton<IHealthCheckService, RmqConnectionHealthCheck>();
         services.AddSingleton<IHealthCheckService, PostgresHealthCheck>();
 
         services.AddHostedService<BaseWorker>();
@@ -48,6 +54,11 @@ var host = Host.CreateDefaultBuilder(args)
             app.UseRouting();
             app.UseEndpoints(e =>
             {
+                e.MapGet("/", () =>
+                {
+                    return Results.Redirect("/health-ui");
+                });
+
                 e.MapHealthChecks("/health", new HealthCheckOptions
                 {
                     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse

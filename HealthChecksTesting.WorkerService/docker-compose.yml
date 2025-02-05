@@ -13,8 +13,10 @@ services:
         environment:
             - ASPNETCORE_ENVIRONMENT=Development
             - DOTNET_ENVIRONMENT=Development
-            - Serilog__MinimumLevel=Information
-            - RabbitMqSettings__HealthCheckUri=http://rabbitmq-hc:15672/api/overview
+            - Serilog__MinimumLevel__Default=Information
+            - RabbitMqSettings__ApiHealthCheckUri=http://rabbitmq-hc:15672/api/overview
+            - RabbitMqSettings__Uri=amqp://guest:guest@rabbitmq-hc/
+            - RabbitMqSettings__LockOnConnectionCreate=true
             - PostgresSettings__ConnectionString=Host=postgres-hc;Port=5432;Database=postgres;Username=postgres;Password=postgres
         networks:
             - healthchecks-network
