@@ -43,8 +43,8 @@ public class RmqConnectionService(ILogger<RmqConnectionService> logger, IOptions
             return null;
         }
 
-        if (_logger.IsEnabled(LogLevel.Warning))
-            _logger.LogWarning("Creating new connection against connection factory to vHost {vHost}", vHost);
+        if (_logger.IsEnabled(LogLevel.Information))
+            _logger.LogInformation("Creating new connection against connection factory to vHost {vHost}", vHost);
 
         var conn = await connFactory.CreateConnectionAsync(ct);
 
